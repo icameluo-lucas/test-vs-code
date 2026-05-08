@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Designer's Canvas | 个人博客</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F5F2ED;
+      --text: #1A1A1A;
+      --accent: #C8553D;
+      --secondary: #6B6B6B;
+      --highlight: #E8E4DE;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Sans 3', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 4rem;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 45%;
+      height: 100%;
+      background: var(--highlight);
+      clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+      z-index: -1;
+      transform: translateY(var(--parallax-offset, 0));
+      transition: transform 0.1s linear;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      max-width: 400px;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      left: 4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .scroll-hint span {
+      width: 40px;
+      height: 1px;
+      background: var(--secondary);
+    }
+
+    /* Section styling */
+    section {
+      padding: 8rem 4rem;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      margin-bottom: 3rem;
+    }
+
+    /* About */
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .skill-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--highlight);
+      border-radius: 2px;
+    }
+
+    .profile-visual {
+      width: 300px;
+      height: 380px;
+      background: linear-gradient(135deg, var(--accent) 0%, #E8B4A0 50%, var(--highlight) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-visual::before {
+      content: '';
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .profile-visual::after {
+      content: '林墨';
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      font-family: var(--font-display);
+      font-size: 4rem;
+      color: rgba(255,255,255,0.15);
+      font-style: italic;
+    }
+
+    /* Works */
+    .works-scroll {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding: 2rem 0 3rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .works-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .works-scroll::-webkit-scrollbar-track {
+      background: var(--highlight);
+    }
+
+    .works-scroll::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .work-card {
+      flex: 0 0 360px;
+      background: white;
+      padding: 2rem;
+      scroll-snap-align: start;
+      transition: transform 0.4s cubic-bezier(0.14, 0.89, 0.42, 1), box-shadow 0.4s ease;
+      cursor: pointer;
+    }
+
+    .work-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    /* 3D 翻转卡片 */
+    .work-card {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      position: relative;
+    }
+
+    .work-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .work-card:hover .work-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .work-card-front,
+    .work-card-back {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .work-card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotateY(180deg);
+      background: var(--accent);
+      color: var(--bg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .work-card-back .work-title {
+      color: var(--bg);
+    }
+
+    .work-card-back .work-desc {
+      color: rgba(245, 242, 237, 0.9);
+      margin-top: 1rem;
+    }
+
+    .work-card-back .read-more {
+      margin-top: auto;
+      color: var(--bg);
+    }
+
+    .work-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .work-category {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .work-year {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--secondary);
+    }
+
+    .work-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .work-desc {
+      font-size: 0.9rem;
+      color: var(--secondary);
+      line-height: 1.6;
+    }
+
+    /* Journal */
+    .journal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+
+    .journal-card {
+      padding: 2rem 0;
+      border-top: 1px solid var(--highlight);
+      transition: border-color 0.3s ease;
+    }
+
+    .journal-card:hover {
+      border-color: var(--accent);
+    }
+
+    .journal-date {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+
+    .journal-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .journal-excerpt {
+      font-size: 0.95rem;
+      color: var(--secondary);
+      line-height: 1.7;
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      transition: gap 0.3s ease;
+    }
+
+    .read-more:hover {
+      gap: 0.75rem;
+    }
+
+    /* Contact */
+    .contact {
+      background: var(--text);
+      color: var(--bg);
+      text-align: center;
+    }
+
+    .contact .section-label {
+      color: var(--accent);
+    }
+
+    .contact .section-title {
+      color: var(--bg);
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-email {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      color: var(--bg);
+      text-decoration: none;
+      position: relative;
+      display: inline-block;
+    }
+
+    .contact-email::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.4s ease;
+    }
+
+    .contact-email:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .social-links a {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--accent);
+    }
+
+    footer {
+      background: var(--text);
+      color: var(--secondary);
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .about {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .journal-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      nav, section, .hero {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 0 1.5rem;
+        min-height: 80vh;
+      }
+
+      .hero::before {
+        width: 100%;
+        height: 40%;
+        top: auto;
+        bottom: 0;
+        clip-path: polygon(0 60%, 100% 0, 100% 100%, 0% 100%);
+      }
+
+      section {
+        padding: 4rem 1.5rem;
+      }
+
+      .journal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .work-card {
+        flex: 0 0 300px;
+      }
+
+      footer {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      #particle-canvas {
+        display: none;
+      }
+
+      .work-card {
+        transform-style: flat;
+      }
+
+      .work-card-inner {
+        transform: none !important;
+      }
+
+      .work-card-back {
+        display: none;
+      }
+
+      .work-card:hover .work-card-front {
+        transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      #particle-canvas {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <nav>
+    <div class="logo">林墨.</div>
+    <ul class="nav-links">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#works">作品</a></li>
+      <li><a href="#journal">随笔</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h1>设计，是<br>寻找<em>本质</em>的过程</h1>
+    <p class="tagline">专注于品牌视觉、用户体验与交互设计，相信好的设计能让生活更美好。</p>
+    <div class="scroll-hint">
+      <span></span>
+      向下探索
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-label fade-in">关于我</div>
+    <div class="about">
+      <div class="about-text fade-in">
+        <p>我是林墨，一位深耕设计领域八年的视觉设计师。目前专注于品牌识别系统与数字产品设计，曾服务于科技、时尚、生活方式等多个领域的客户。</p>
+        <p>我相信设计不仅仅是美的追求，更是一种解决问题的思维方式。每一个项目都是一次探索，目标是找到功能与美学之间的最佳平衡点。</p>
+        <div class="skills">
+          <span class="skill-tag">品牌设计</span>
+          <span class="skill-tag">UI/UX</span>
+          <span class="skill-tag">字体设计</span>
+          <span class="skill-tag">插画</span>
+          <span class="skill-tag">动效设计</span>
+          <span class="skill-tag">设计系统</span>
+        </div>
+      </div>
+      <div class="profile-visual fade-in"></div>
+    </div>
+  </section>
+
+  <section id="works">
+    <div class="section-label fade-in">精选作品</div>
+    <h2 class="section-title fade-in">那些让我骄傲的项目</h2>
+    <div class="works-scroll">
+      <div class="work-card fade-in">
+        <div class="work-card-inner">
+          <div class="work-card-front">
+            <div class="work-meta">
+              <span class="work-category">品牌设计</span>
+              <span class="work-year">2025</span>
+            </div>
+            <h3 class="work-title">溪流茶饮</h3>
+            <p class="work-desc">为一家新式茶饮品牌打造的完整视觉系统，从Logo到空间设计，传递东方茶文化的现代表达。</p>
+          </div>
+          <div class="work-card-back">
+            <h3 class="work-title">溪流茶饮</h3>
+            <p class="work-desc">为一家新式茶饮品牌打造的完整视觉系统，从Logo到空间设计，传递东方茶文化的现代表达。</p>
+            <a href="#" class="read-more">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="work-card fade-in">
+        <div class="work-card-inner">
+          <div class="work-card-front">
+            <div class="work-meta">
+              <span class="work-category">UI/UX</span>
+              <span class="work-year">2025</span>
+            </div>
+            <h3 class="work-title">听见音乐</h3>
+            <p class="work-desc">一款音乐播放应用的界面设计，以「沉浸在音乐中」为核心理念，打造流畅的交互体验。</p>
+          </div>
+          <div class="work-card-back">
+            <h3 class="work-title">听见音乐</h3>
+            <p class="work-desc">一款音乐播放应用的界面设计，以「沉浸在音乐中」为核心理念，打造流畅的交互体验。</p>
+            <a href="#" class="read-more">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="work-card fade-in">
+        <div class="work-card-inner">
+          <div class="work-card-front">
+            <div class="work-meta">
+              <span class="work-category">字体设计</span>
+              <span class="work-year">2024</span>
+            </div>
+            <h3 class="work-title">墨体</h3>
+            <p class="work-desc">一款融合书法笔触与现代几何的中文字体，适用于标题与品牌标识。</p>
+          </div>
+          <div class="work-card-back">
+            <h3 class="work-title">墨体</h3>
+            <p class="work-desc">一款融合书法笔触与现代几何的中文字体，适用于标题与品牌标识。</p>
+            <a href="#" class="read-more">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="work-card fade-in">
+        <div class="work-card-inner">
+          <div class="work-card-front">
+            <div class="work-meta">
+              <span class="work-category">品牌设计</span>
+              <span class="work-year">2024</span>
+            </div>
+            <h3 class="work-title">山居笔记</h3>
+            <p class="work-desc">为一家精品民宿设计的品牌系统，融入在地文化与自然元素。</p>
+          </div>
+          <div class="work-card-back">
+            <h3 class="work-title">山居笔记</h3>
+            <p class="work-desc">为一家精品民宿设计的品牌系统，融入在地文化与自然元素。</p>
+            <a href="#" class="read-more">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+      <div class="work-card fade-in">
+        <div class="work-card-inner">
+          <div class="work-card-front">
+            <div class="work-meta">
+              <span class="work-category">插画</span>
+              <span class="work-year">2024</span>
+            </div>
+            <h3 class="work-title">城市漫游</h3>
+            <p class="work-desc">一组城市主题插画，用温暖的色彩记录城市中容易被忽略的美好瞬间。</p>
+          </div>
+          <div class="work-card-back">
+            <h3 class="work-title">城市漫游</h3>
+            <p class="work-desc">一组城市主题插画，用温暖的色彩记录城市中容易被忽略的美好瞬间。</p>
+            <a href="#" class="read-more">查看详情 →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="journal">
+    <div class="section-label fade-in">随笔</div>
+    <h2 class="section-title fade-in">设计思考与生活感悟</h2>
+    <div class="journal-grid">
+      <article class="journal-card fade-in">
+        <div class="journal-date">2026.03.28</div>
+        <h3 class="journal-title">为什么我开始用手绘做设计</h3>
+        <p class="journal-excerpt">数字化工具有着无可比拟的优势，但我发现，在最初的概念阶段，手绘草图能让我更自由地思考...</p>
+        <a href="#" class="read-more">阅读全文 →</a>
+      </article>
+      <article class="journal-card fade-in">
+        <div class="journal-date">2026.02.15</div>
+        <h3 class="journal-title">字体选择的底层逻辑</h3>
+        <p class="journal-excerpt">选择字体不只是美学问题，更关乎传达的内容和受众的期待。这是我这些年总结的一些思考框架...</p>
+        <a href="#" class="read-more">阅读全文 →</a>
+      </article>
+      <article class="journal-card fade-in">
+        <div class="journal-date">2025.12.01</div>
+        <h3 class="journal-title">设计的留白</h3>
+        <p class="journal-excerpt">最近在项目中越来越体会到「少即是多」的力量。不是要填满每一个空间，而是让重要的元素有呼吸的余地...</p>
+        <a href="#" class="read-more">阅读全文 →</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="section-label fade-in">联系我</div>
+    <h2 class="section-title fade-in">一起创造点什么</h2>
+    <a href="mailto:hello@linmo.design" class="contact-email fade-in">hello@linmo.design</a>
+    <div class="social-links fade-in">
+      <a href="#">Behance</a>
+      <a href="#">Dribbble</a>
+      <a href="#">Instagram</a>
+      <a href="#">小红书</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 林墨设计工作室</span>
+    <span>用热爱点亮每一个像素</span>
+  </footer>
+
+  <script>
+    // Particle System
+    class Particle {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 80 + Math.random() * 120;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+        this.opacity = 0.1 + Math.random() * 0.2;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > this.canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > this.canvas.height) this.speedY *= -1;
+      }
+
+      draw(ctx) {
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, this.size / 2
+        );
+        gradient.addColorStop(0, `rgba(200, 85, 61, ${this.opacity})`);
+        gradient.addColorStop(1, 'rgba(200, 85, 61, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.filter = `blur(${this.size / 3}px)`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none';
+      }
+    }
+
+    class ParticleSystem {
+      constructor() {
+        this.canvas = document.getElementById('particle-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.animationId = null;
+
+        this.resize();
+        this.init();
+
+        this.mouseX = -1000;
+        this.mouseY = -1000;
+
+        document.addEventListener('mousemove', (e) => {
+          this.mouseX = e.clientX;
+          this.mouseY = e.clientY;
+        });
+
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      init() {
+        const isMobile = window.innerWidth < 768;
+        const count = isMobile ? 8 : 18;
+
+        this.particles = [];
+        for (let i = 0; i < count; i++) {
+          this.particles.push(new Particle(this.canvas));
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.particles.forEach(p => {
+          p.update();
+          p.draw(this.ctx);
+        });
+
+        this.drawCursorGlow(this.ctx);
+
+        this.animationId = requestAnimationFrame(() => this.animate());
+      }
+
+      start() {
+        if (!this.animationId) this.animate();
+      }
+
+      stop() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+        }
+      }
+
+      drawCursorGlow(ctx) {
+        if (this.mouseX < 0) return;
+
+        const gradient = ctx.createRadialGradient(
+          this.mouseX, this.mouseY, 0,
+          this.mouseX, this.mouseY, 150
+        );
+        gradient.addColorStop(0, 'rgba(200, 85, 61, 0.15)');
+        gradient.addColorStop(1, 'rgba(200, 85, 61, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.mouseX, this.mouseY, 150, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Initialize Particle System
+    const particleSystem = new ParticleSystem();
+    particleSystem.start();
+
+    // 无障碍支持
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      particleSystem.stop();
+    }
+
+    // Scroll fade-in animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, index * 100);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // 视差滚动
+    let ticking = false;
+
+    function updateParallax() {
+      const scrolled = window.pageYOffset;
+      const hero = document.querySelector('.hero');
+
+      // Hero 背景层移动速度 0.5x
+      if (hero) {
+        hero.style.setProperty('--parallax-offset', `${scrolled * 0.5}px`);
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sI \"https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap\")",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(mkdir -p \"C:\\\\Users\\\\nd\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\superpowers\")",
+      "Bash(git clone *)",
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com)",
+      "mcp__plugin_github_github__create_repository"
+    ]
+  },
+  "enabledPlugins": {}
+}
